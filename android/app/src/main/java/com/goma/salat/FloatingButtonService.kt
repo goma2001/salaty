@@ -17,6 +17,7 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
+import android.os.IBinder
 import android.os.Looper
 import android.os.SystemClock
 import android.provider.Settings

@@ -43,6 +43,7 @@ class MihrabLiveActivityActionReceiver : BroadcastReceiver() {
   override fun onReceive(ctx: Context, intent: Intent) {
     when (intent.action) {
       ACTION_TOGGLE_MUTE_NEXT -> handleMuteToggle(ctx, intent)
+      ACTION_SET_ALERT_MODE -> handleSetAlertMode(ctx, intent)
       ACTION_TOGGLE_AOD -> handleAodToggle(ctx)
     }
   }
@@ -154,9 +155,56 @@ class MihrabLiveActivityActionReceiver : BroadcastReceiver() {
     }.onFailure { Log.w(TAG, "headless alert-mode dispatch failed", it) }
   }
 
+  /**
+   * Set one occurrence's alert mode outright, rather than cycling it.
+   *
+   * The floating button's quick menu and adhan mini player ask for a
+   * named mode — "mute the Fajr adhan" means silent, not one step round
+   * the cycle from wherever the row happens to be. The rest is the
+   * cycle's own work: the override is stored the same way, and the
+   * same HeadlessJS task applies it, so it works with the app closed.
+   * The extras carry only what the silent path needs; the task never
+   * posts a notification for a silent mode, so no channel id is
+   * required of the sender.
+   */
+  private fun handleSetAlertMode(ctx: Context, intent: Intent) {
+    val epoch = intent.getLongExtra(EXTRA_EPOCH, 0L)
+    val name = intent.getStringExtra(EXTRA_NAME) ?: ""
+    val mode = intent.getStringExtra(EXTRA_MODE) ?: ""
+    if (epoch <= 0L || name.isEmpty()) return
+    if (epoch <= System.currentTimeMillis()) {
+      Log.i(TAG, "ignoring alert-mode set for a past event: epoch=$epoch name=$name")
+      return
+    }
+    val coerced = LiveActivityAlertModes.coerce(name, mode)
+    val prefs = ctx.getSharedPreferences(
+      MihrabLiveActivityModule.PREFS_NAME, Context.MODE_PRIVATE,
+    )
+    // No payload to read a standing mode from here, so nothing is ever
+    // "the same as the base": the override is stored as asked.
+    LiveActivityAlertModes.store(prefs, epoch, name, coerced, "")
+    Log.i(TAG, "set alert mode: epoch=$epoch name=$name mode=$coerced")
+    runCatching {
+      val svc = Intent(ctx, AdhanMuteHeadlessService::class.java).apply {
+        putExtra(EXTRA_EPOCH, epoch)
+        putExtra(EXTRA_NAME, name)
+        putExtra(EXTRA_MODE, coerced)
+        putExtra("title", intent.getStringExtra("title") ?: name)
+        putExtra("body", "")
+        putExtra("adhanChannelId", "")
+        putExtra("adhanSoundId", "default")
+        putExtra("defaultChannelId", "prayer-times-tone")
+      }
+      ctx.startService(svc)
+      HeadlessReschedule.acquire(ctx)
+    }.onFailure { Log.w(TAG, "headless alert-mode dispatch failed", it) }
+  }
+
   companion object {
     const val TAG = "MihrabLAAction"
     const val ACTION_TOGGLE_MUTE_NEXT = "com.goma.salat.ACTION_TOGGLE_MUTE_NEXT"
+    /** Set one occurrence's alert mode directly (see handleSetAlertMode). */
+    const val ACTION_SET_ALERT_MODE = "com.goma.salat.ACTION_SET_ALERT_MODE"
     const val ACTION_TOGGLE_AOD = "com.goma.salat.ACTION_TOGGLE_AOD"
     const val EXTRA_EPOCH = "epoch"
     const val EXTRA_NAME = "name"

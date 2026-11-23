@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The icon ring's fill: a ring shape whose level is the fraction of
+     the wait to the next prayer that is left. White here — the service
+     tints it calm green, then gold in the last hour, through
+     ProgressBar's progress tint. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="ring"
+    android:innerRadiusRatio="2.2"
+    android:thickness="3dp"
+    android:useLevel="true">
+    <solid android:color="#FFFFFF" />
+</shape>

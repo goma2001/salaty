@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icon-only floating prayer button (1.0.11): a small emerald circle
+     with the app's arch-and-crescent glyph, ringed by a progress ring
+     that drains as the next prayer approaches. The ring is a
+     determinate horizontal ProgressBar whose progress drawable is a
+     ring shape, so its level is the fraction of the wait that is left;
+     the service tints it calm green, then gold in the last hour. The
+     badge (gone most of the day) shows the minutes left in the last
+     hour. Tap opens the glance card, long-press the quick menu. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/overlay_pill_root"
+    android:layout_width="56dp"
+    android:layout_height="56dp"
+    android:background="@drawable/overlay_icon_bg">
+
+    <ProgressBar
+        android:id="@+id/overlay_icon_ring"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/overlay_ring_track"
+        android:indeterminate="false"
+        android:max="1000"
+        android:progress="1000"
+        android:progressDrawable="@drawable/overlay_ring_progress" />
+
+    <ImageView
+        android:id="@+id/overlay_icon_glyph"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="center"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_stat_prayer" />
+
+    <TextView
+        android:id="@+id/overlay_icon_badge"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_gravity="bottom|end"
+        android:background="@drawable/overlay_badge_bg"
+        android:gravity="center"
+        android:textColor="#01543F"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+</FrameLayout>

@@ -57,7 +57,7 @@ import { syncPrayerWidget } from '../widget/syncPrayerWidget';
 import { collectWidgetExtras } from '../widget/collectWidgetExtras';
 import { useWidgetDataRevision } from '../widget/useWidgetDataRevision';
 import { syncLiveActivity } from '../liveActivity/syncLiveActivity';
-import { syncFloatingButton } from '../services/floatingButton';
+import { consumePendingHide, syncFloatingButton } from '../services/floatingButton';
 import {
   addDays,
   daysOnDeviceClock,
@@ -1319,12 +1319,22 @@ export function HomeScreen() {
         }).catch(e => console.warn('syncLiveActivity (focus):', e));
         // Floating button — the same cadence as the Live Activity, so
         // the pill above other apps stays in step with the home screen.
-        syncFloatingButton({
-          enabled: settings.floatingButtonEnabled,
-          today: phoneView.la.today,
-          tomorrow: phoneView.la.tomorrow,
-          now: new Date(),
-        }).catch(e => console.warn('syncFloatingButton (focus):', e));
+        // The quick menu's Hide button stops the pill while the app is
+        // closed and leaves a flag behind: drain it first, or this sync
+        // would restart a pill the user just hid.
+        void consumePendingHide().then(hidden => {
+          if (hidden) {
+            updateSettings({ floatingButtonEnabled: false });
+            return;
+          }
+          syncFloatingButton({
+            enabled: settings.floatingButtonEnabled,
+            style: settings.floatingButtonStyle,
+            today: phoneView.la.today,
+            tomorrow: phoneView.la.tomorrow,
+            now: new Date(),
+          }).catch(e => console.warn('syncFloatingButton (focus):', e));
+        });
       }
 
       if (settings.notificationsEnabled) {
@@ -1373,6 +1383,8 @@ export function HomeScreen() {
       // Re-push the floating button the instant its toggle changes
       // (HomeScreen stays mounted, so this fires even from Settings).
       settings.floatingButtonEnabled,
+      // Re-push the floating button the instant its shape changes.
+      settings.floatingButtonStyle,
       // `palette.accentSolid` is derived from the accent id and its custom
       // hex, so it moves whenever either of them does — listing all three
       // said the same thing three times, and hid the linter's real
@@ -1383,6 +1395,7 @@ export function HomeScreen() {
       settings.appearance,
       settings.useSystemDynamicTheme,
       settings.liveActivityDesign,
+      updateSettings,
     ]),
   );
 
@@ -1498,12 +1511,21 @@ export function HomeScreen() {
       tinted: settings.tintedSurfaces,
     }).catch(e => console.warn('syncLiveActivity (effect):', e));
     // Floating button — same cadence as the Live Activity above.
-    syncFloatingButton({
-      enabled: settings.floatingButtonEnabled,
-      today: phoneView.la.today,
-      tomorrow: phoneView.la.tomorrow,
-      now: new Date(),
-    }).catch(e => console.warn('syncFloatingButton (effect):', e));
+    // Drain a Hide from the overlay's quick menu first (see the focus
+    // sync above): the toggle, not this sync, is what must change.
+    void consumePendingHide().then(hidden => {
+      if (hidden) {
+        updateSettings({ floatingButtonEnabled: false });
+        return;
+      }
+      syncFloatingButton({
+        enabled: settings.floatingButtonEnabled,
+        style: settings.floatingButtonStyle,
+        today: phoneView.la.today,
+        tomorrow: phoneView.la.tomorrow,
+        now: new Date(),
+      }).catch(e => console.warn('syncFloatingButton (effect):', e));
+    });
   }, [
     afterFirstPaint,
     hydrated,
@@ -1518,6 +1540,8 @@ export function HomeScreen() {
     settings.liveActivityEnabled,
     // Re-push the floating button the instant its toggle changes.
     settings.floatingButtonEnabled,
+    // Re-push the floating button the instant its shape changes.
+    settings.floatingButtonStyle,
     palette.accentSolid,
     settings.appAccentId,
     settings.appAccentCustomHex,
@@ -1540,6 +1564,8 @@ export function HomeScreen() {
     clockHour12,
     // The Hijri date in the payload follows the chosen calendar.
     hijriVersion,
+    // Draining a hide left by the quick menu turns the toggle off.
+    updateSettings,
   ]);
 
   // Persist last-fetched coords so MonthScreen and offline use can fall back to

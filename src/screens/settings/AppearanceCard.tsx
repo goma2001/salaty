@@ -259,6 +259,42 @@ function AppearanceCardImpl() {
           </Text>
         </SettingsBlock>
 
+        {/* The Qibla compass's look (1.0.11): the classic instrument dial,
+            or the interactive one — a gold beam toward a pulsing Kaaba,
+            how far to turn, and a glow when the phone faces the Qibla.
+            The bearing never changes, only the look. */}
+        <SettingsBlock>
+          <Text style={[s.label, { color: palette.muted }]}>
+            {t('settings.compassStyle', 'Qibla compass')}
+          </Text>
+          <SegmentedControl
+            testID="appearance-compassStyle"
+            accessibilityLabel={t('settings.compassStyle', 'Qibla compass')}
+            segments={[
+              {
+                key: 'classic',
+                label: t('settings.compassStyleClassic', 'Classic'),
+              },
+              {
+                key: 'interactive',
+                label: t('settings.compassStyleInteractive', 'Interactive'),
+              },
+            ]}
+            value={settings.compassStyle === 'interactive' ? 'interactive' : 'classic'}
+            onChange={key =>
+              updateSettings({
+                compassStyle: key === 'interactive' ? 'interactive' : 'classic',
+              })
+            }
+          />
+          <Text style={[s.help, { color: palette.muted, marginTop: SPACING.sm }]}>
+            {t(
+              'settings.compassStyleHelp',
+              'Classic is the instrument dial: a degree ring with a thin needle and the Kaaba at its tip. Interactive adds a gold beam toward a pulsing Kaaba marker, a big reading of how far to turn, and a glow when you are facing the Qibla.',
+            )}
+          </Text>
+        </SettingsBlock>
+
         {/* Colour theme — the alternative to system colours. Classic is the
             app's own paper and ink; a preset themes dark mode in that colour
             (light stays classic). Custom colours are an accent only, since

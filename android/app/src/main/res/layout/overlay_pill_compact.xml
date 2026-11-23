@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Compact floating prayer pill (1.0.11): the same two texts as the
+     large pill on one line — the next prayer and its clock time, then
+     the live countdown — in a smaller, flatter pill. The view ids are
+     the large pill's, so the service fills them the same way. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/overlay_pill_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/overlay_pill_bg"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
+
+    <TextView
+        android:id="@+id/overlay_pill_line1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="صلاتي"
+        android:textColor="#C9A227"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/overlay_pill_line2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

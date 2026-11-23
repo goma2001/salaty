@@ -72,6 +72,9 @@ export type AppearanceSlice = Pick<
   | 'skyVariant'
   // The hero's band: painted, or the chart (screens/home/trackModel.ts).
   | 'heroLook'
+  // Which Qibla dial is drawn — rendered by AppearanceCard beside the
+  // hero's look, so it rides in this slice for the same reason.
+  | 'compassStyle'
   // The shelf of kept custom colours, drawn by the same swatch row as
   // the presets — so the card that renders one renders the other.
   | 'savedAccentColors'
@@ -166,6 +169,7 @@ export type LiveActivitySlice = Pick<
   PrayerAppSettings,
   | 'liveActivityEnabled'
   | 'floatingButtonEnabled'
+  | 'floatingButtonStyle'
   | 'liveActivityCompactMode'
   | 'liveActivityShowSunrise'
   | 'liveActivityShowHijri'
@@ -327,6 +331,7 @@ export function PrayerSettingsProvider({
       tintedSurfaces: settings.tintedSurfaces,
       skyVariant: settings.skyVariant,
       heroLook: settings.heroLook,
+      compassStyle: settings.compassStyle,
       savedAccentColors: settings.savedAccentColors,
       showPracticeOnHome: settings.showPracticeOnHome,
       launchAnimation: settings.launchAnimation,
@@ -344,6 +349,7 @@ export function PrayerSettingsProvider({
       settings.tintedSurfaces,
       settings.skyVariant,
       settings.heroLook,
+      settings.compassStyle,
       settings.savedAccentColors,
       settings.showPracticeOnHome,
       settings.launchAnimation,
@@ -500,6 +506,7 @@ export function PrayerSettingsProvider({
     () => ({
       liveActivityEnabled: settings.liveActivityEnabled,
       floatingButtonEnabled: settings.floatingButtonEnabled,
+      floatingButtonStyle: settings.floatingButtonStyle,
       liveActivityCompactMode: settings.liveActivityCompactMode,
       liveActivityShowSunrise: settings.liveActivityShowSunrise,
       liveActivityShowHijri: settings.liveActivityShowHijri,
@@ -511,6 +518,7 @@ export function PrayerSettingsProvider({
     [
       settings.liveActivityEnabled,
       settings.floatingButtonEnabled,
+      settings.floatingButtonStyle,
       settings.liveActivityCompactMode,
       settings.liveActivityShowSunrise,
       settings.liveActivityShowHijri,

@@ -258,8 +258,8 @@ android {
         applicationId "com.goma.salat"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 11
-        versionName "1.0.10"
+        versionCode 12
+        versionName "1.0.11"
         // Hardware memory tagging (ARM MTE) for the app's native heap:
         // see the note on `memtagMode` in AndroidManifest.xml.
         // `-PmemtagMode=sync` makes a build that faults AT the bad access,

@@ -14,6 +14,7 @@ type FloatingButtonNative = {
   openPermissionSettings(): Promise<void>;
   start(times: string): Promise<boolean>;
   stop(): Promise<void>;
+  consumePendingHide(): Promise<boolean>;
 };
 
 const native: FloatingButtonNative | undefined =
@@ -67,5 +68,19 @@ export async function stopFloatingButton(): Promise<void> {
     await native.stop();
   } catch (e) {
     console.warn('FloatingButton.stop:', e);
+  }
+}
+
+/**
+ * Whether the user hid the pill from its own quick menu while the app
+ * was closed (see src/services/floatingButton.ts). Reads and clears
+ * the flag the menu leaves behind; false without the module.
+ */
+export async function consumePendingHide(): Promise<boolean> {
+  if (!native) return false;
+  try {
+    return await native.consumePendingHide();
+  } catch {
+    return false;
   }
 }

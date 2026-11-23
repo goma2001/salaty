@@ -9,6 +9,7 @@ import { useAndroidSubScreenBack } from '../navigation/useAndroidSubScreenBack';
 import { normalizeHeadingDeg, qiblaBearingFrom } from '../utils/qibla';
 import { BearingHeader } from './compass/BearingHeader';
 import { CompassDial } from './compass/CompassDial';
+import { CompassDialInteractive } from './compass/CompassDialInteractive';
 import { SignalIndicator } from './compass/SignalIndicator';
 import { StatusBanners } from './compass/StatusBanners';
 import { useCompassAnnouncer } from './compass/useCompassAnnouncer';
@@ -124,7 +125,11 @@ export function CompassScreen() {
       ]}>
       <BearingHeader qiblaDeg={qibla} />
 
-      <CompassDial mode={mode} needleDeg={needleDeg} signalStrength={signalStrength} />
+      {settings.compassStyle === 'interactive' ? (
+        <CompassDialInteractive mode={mode} needleDeg={needleDeg} />
+      ) : (
+        <CompassDial mode={mode} needleDeg={needleDeg} signalStrength={signalStrength} />
+      )}
 
       <SignalIndicator mode={mode} signalStrength={signalStrength} />
 

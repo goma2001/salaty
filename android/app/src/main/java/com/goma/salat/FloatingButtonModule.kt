@@ -25,6 +25,11 @@ import com.facebook.react.bridge.ReactMethod
  *   can send the user to the system page instead of pretending the
  *   pill is up.
  * - `stop`: persists disabled and stops the service.
+ * - `consumePendingHide`: whether the user hid the pill from its own
+ *   quick menu while the app was closed. The menu stops the service
+ *   and leaves a flag behind; this reads and clears it, so the app
+ *   can turn the Settings toggle off instead of the next sync
+ *   restarting a pill the user just hid.
  *
  * Every method resolves rather than rejecting: a caller that cannot
  * reach the native side (tests, a build without the module) gets a
@@ -101,6 +106,19 @@ class FloatingButtonModule(private val reactContext: ReactApplicationContext) :
     }
     runCatching { reactContext.startService(intent) }
     promise.resolve(null)
+  }
+
+  @ReactMethod
+  fun consumePendingHide(promise: Promise) {
+    val prefs = reactContext.getSharedPreferences(
+      FloatingButtonService.PREFS_NAME,
+      Context.MODE_PRIVATE,
+    )
+    val hidden = prefs.getBoolean(FloatingButtonService.KEY_PENDING_HIDE, false)
+    if (hidden) {
+      prefs.edit().remove(FloatingButtonService.KEY_PENDING_HIDE).apply()
+    }
+    promise.resolve(hidden)
   }
 
   companion object {

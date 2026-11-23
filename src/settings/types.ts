@@ -554,6 +554,15 @@ export type PrayerAppSettings = {
    * on every load.
    */
   heroLookArchDefault: boolean;
+  /**
+   * How the Qibla compass is drawn (1.0.11):
+   * 'classic' — the instrument dial (degree ring, thin needle with the
+   * Kaaba at its tip); 'interactive' — the same bearing, with a gold beam
+   * toward a pulsing Kaaba marker, a big reading of how far to turn and
+   * turn guidance, and a glow when the phone is facing the Qibla.
+   * The bearing itself never changes — only the look.
+   */
+  compassStyle: 'classic' | 'interactive';
   tintedSurfaces: boolean;
   /**
    * Custom colours the user has kept, newest first — see
@@ -581,6 +590,15 @@ export type PrayerAppSettings = {
    * "Draw over other apps" permission, granted from Settings.
    */
   floatingButtonEnabled: boolean;
+  /**
+   * Which shape the floating button takes (1.0.11):
+   * 'large' — the two-line pill (next prayer + clock time above, live
+   * countdown below); 'compact' — one line, about 45% smaller;
+   * 'icon' — a small circular icon with a gold progress ring, tap for a
+   * glance at the next prayer, long-press for a quick menu. The large
+   * pill is the default, so existing users see no change.
+   */
+  floatingButtonStyle: 'large' | 'compact' | 'icon';
   // ── Retained-but-unused (since v2.1.0-beta.5) ──────────────────────────
   // These Live Activity display knobs were removed from the UI: Sunrise is
   // always shown and the Hijri/location captions are always omitted. The
@@ -905,6 +923,8 @@ export const DEFAULT_SETTINGS: PrayerAppSettings = {
   heroLook: DEFAULT_HERO_LOOK,
   // Whether the 1.0.4 upgrade that made the arch the default has run.
   heroLookArchDefault: false,
+  // The classic dial until someone picks the interactive one.
+  compassStyle: 'classic',
   // Nobody starts with a colour they did not pick.
   savedAccentColors: [],
   // Live Activity defaults: OFF; when enabled, the detail-rich layout
@@ -915,6 +935,8 @@ export const DEFAULT_SETTINGS: PrayerAppSettings = {
   // Floating button defaults: OFF; the pill needs the overlay
   // permission, which the toggle sends the user to grant.
   floatingButtonEnabled: false,
+  // The large two-line pill until someone picks another shape.
+  floatingButtonStyle: 'large',
   liveActivityCompactMode: false,
   liveActivityShowSunrise: true,
   liveActivityShowHijri: true,
